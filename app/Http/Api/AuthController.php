@@ -51,6 +51,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
+
         $token = $users->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -69,6 +70,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        $request->user()->tokens()->delete();
         $token = $request->user()->createToken('auth_token')->plainTextToken;
         return response()->json([
             'access_token' => $token,
