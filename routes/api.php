@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login',  [AuthController::class, 'login']);
 Route::post('/register',  [AuthController::class, 'register']);
 Route::get('/verify-token',  [AuthController::class, 'verifyToken']);
+
+//Precisa estar autenticado para pode atualizar o token
 Route::middleware('auth:sanctum')->post('/renew-token',  [AuthController::class, 'renewToken']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

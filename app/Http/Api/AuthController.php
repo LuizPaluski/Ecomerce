@@ -70,6 +70,10 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
+        if (!Hash::check($request->password, $request->user()->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
         $request->user()->tokens()->delete();
         $token = $request->user()->createToken('auth_token')->plainTextToken;
         return response()->json([
