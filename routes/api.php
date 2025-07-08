@@ -3,6 +3,83 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::post('/login',  function () {});
+Route::post('/register',  function () {});
+Route::post('/renew-token',  function () {});
+Route::get('/verify-token',  function () {});
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    //Users
+    Route::get('/user/me', function () {});
+    Route::put('/user/me', function () {});
+    Route::delete('/user/me', function () {});
+    Route::post('/user/create-moderator', function () {});
+    Route::put('/user/iamge', function () {});
+
+    //address
+    Route::get('/address/', function () {});
+    Route::post('/address/', function () {});
+    Route::put('/address/{address_id}', function () {});
+    Route::get('/address/{address_id}', function () {});
+    Route::delete('/address/{address_id}', function () {});
+    //categories
+    Route::get('/categories', function () {});
+    Route::post('/categories', function (){});
+    Route::put('/categories/{category_id}', function () {});
+    Route::get('/categories/{category_id}', function () {});
+    Route::delete('/categories/{category_id}', function () {});
+
+    //Tags
+    Route::get('/tags', function () {});
+    Route::post('/tags', function () {});
+    Route::put('/tags/{tag_id}', function () {});
+    Route::get('/tags/{tag_id}', function () {});
+    Route::delete('/tags/{tag_id}', function () {});
+    Route::post('/tags/{tag_od}/products/{product_id}', function () {});
+    Route::delete('/tags/{tag_od}/products/{product_id}', function () {});
+
+    //Products
+    Route::get('/products', function () {});
+    Route::post('/products', function () {});
+    Route::get('/products/user/{user_id}', function () {});
+    Route::get('/products/category/{category_id}', function () {});
+    Route::get('/products/{product_id}', function () {});
+    Route::put('/products/{product_id}', function () {});
+    Route::delete('/products/{product_id}', function () {});
+    Route::put('/products/{product_id}/stock', function () {});
+    Route::put('/products/{product_id}/images', function () {});
+
+    //Discounts
+    Route::get('/discounts', function () {});
+    Route::post('/discounts', function () {});
+    Route::get('/discounts/{discount_id}', function () {});
+    Route::put('/discounts/{discount_id}', function () {});
+    Route::delete('/discounts/{discount_id}', function () {});
+
+    //Coupons
+    Route::get('/coupons/', function () {});
+    Route::post('/coupons/', function () {});
+    Route::get('/coupons/{coupon_id}', function () {});
+    Route::put('/coupons/{coupon_id}', function () {});
+    Route::delete('/coupons/{coupon_id}', function () {});
+
+    //Cart
+    Route::get('/cart/', function () {});
+    Route::post('/cart/', function () {});
+    Route::get('/cart/items', function () {});
+    Route::put('/cart/items', function () {});
+    Route::post('/cart/items', function () {});
+    Route::delete('/cart/items', function () {});
+    Route::delete('/cart/clear', function () {});
+
+    //Orders
+    Route::get('/orders/all', function () {});
+    Route::get('/orders/', function () {});
+    Route::post('/orders/', function () {});
+    Route::get('/orders/{order_id}', function () {});
+    Route::put('/orders/{order_id}', function () {});
+    Route::delete('/orders/{order_id}', function () {});
+    Route::get('/orders/all/{admin_id}', function () {});
+
+
+});
