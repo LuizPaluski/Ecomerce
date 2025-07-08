@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-Route::post('/login',  function () {});
-Route::post('/register',  function () {});
-Route::post('/renew-token',  function () {});
-Route::get('/verify-token',  function () {});
+//Register e login
+Route::post('/login',  [AuthController::class, 'login']);
+Route::post('/register',  [AuthController::class, 'register']);
+Route::get('/verify-token',  [AuthController::class, 'verifyToken']);
+Route::middleware('auth:sanctum')->post('/renew-token',  [AuthController::class, 'renewToken']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     //Users
