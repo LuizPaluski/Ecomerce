@@ -2,8 +2,8 @@
 
 use App\Http\Api\AuthController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AddressUser;
 //Register e login
 Route::post('/login',  [AuthController::class, 'login']);
 Route::post('/register',  [AuthController::class, 'register']);
@@ -21,11 +21,11 @@ Route::middleware('auth:sanctum')->group(function ()  {
     Route::put('/user/imagem', function () {});
 
     //address
-    Route::get('/address/', function () {});
-    Route::post('/address/', function () {});
-    Route::put('/address/{address_id}', function () {});
-    Route::get('/address/{address_id}', function () {});
-    Route::delete('/address/{address_id}', function () {});
+    Route::get('/address/', [AddressUser::class, 'index']);
+    Route::post('/address/', [AddressUser::class, 'store']);;
+    Route::put('/address/{address_id}', [AddressUser::class, 'update']);;
+    Route::get('/address/{address_id}', [AddressUser::class, 'show']);
+    Route::delete('/address/{address_id}', [AddressUser::class, 'destroy']);
     //categories
     Route::get('/categories', function () {});
     Route::post('/categories', function (){});
