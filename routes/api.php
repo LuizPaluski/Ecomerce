@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Api\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 //Register e login
@@ -11,13 +12,13 @@ Route::get('/verify-token',  [AuthController::class, 'verifyToken']);
 //Precisa estar autenticado para pode atualizar o token
 Route::middleware('auth:sanctum')->post('/renew-token',  [AuthController::class, 'renewToken']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->group(function ()  {
     //Users
-    Route::get('/user/me', function () {});
-    Route::put('/user/me', function () {});
-    Route::delete('/user/me', function () {});
+    Route::get('/user/me', [Usercontroller::class, 'index']);
+    Route::put('/user/me', [UserController::class, 'update']);
+    Route::delete('/user/me', [AuthController::class, 'delete']);
     Route::post('/user/create-moderator', function () {});
-    Route::put('/user/iamge', function () {});
+    Route::put('/user/imagem', function () {});
 
     //address
     Route::get('/address/', function () {});

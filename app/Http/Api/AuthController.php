@@ -87,4 +87,16 @@ class AuthController extends Controller
             'acess_token' => $request->bearerToken(),
         ]);
     }
+
+    public function delete(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string',
+        ]);
+        if($validator->fails()){
+            return response()->json($validator->errors(), 422);
+        }
+        $request->user()->delete();
+        return response()->json(['message' => 'User deleted']);
+    }
 }
