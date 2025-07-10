@@ -52,7 +52,10 @@ class AuthController extends Controller
         if (!$users || !Hash::check($request->password, $users->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
-
+//melhorar essa parte
+        if($users->id === 1 ){
+            $users->assignPermission('admin');
+        }
 
 
         $token = $users->createToken('auth_token')->plainTextToken;

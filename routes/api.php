@@ -17,8 +17,8 @@ Route::middleware('auth:sanctum')->group(function ()  {
     Route::get('/user/me', [Usercontroller::class, 'index']);
     Route::put('/user/me', [UserController::class, 'update']);
     Route::delete('/user/me', [AuthController::class, 'delete']);
-    Route::post('/user/create-moderator', function () {});
-    Route::put('/user/imagem', function () {});
+    Route::post('/user/create-moderator', [UserController::class, 'createModerator']);
+    Route::put('/user/imagen', function () {});
 
     //address
     Route::get('/address/', [AddressUser::class, 'index']);

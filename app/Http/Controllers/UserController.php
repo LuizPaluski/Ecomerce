@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Dotenv\Validator;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -22,6 +24,17 @@ class UserController extends Controller
         ]);
         $request->user()->update($update);
         return response()->json($request->user());
+    }
+
+    public function createModerator(Request $request){
+        $user =
+        $request->user()->assignPermission('admin');
+
+        if(!$request->user()->hasPermission('admin')){
+            return response()->json('error not admin');
+        }
+
+        return response()->json('success');
     }
 
 
