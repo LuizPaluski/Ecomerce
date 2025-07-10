@@ -3,9 +3,11 @@
 namespace App\Http\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Gate;
 
 
 class AuthController extends Controller
@@ -50,6 +52,7 @@ class AuthController extends Controller
         if (!$users || !Hash::check($request->password, $users->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
+
 
 
         $token = $users->createToken('auth_token')->plainTextToken;
@@ -99,4 +102,7 @@ class AuthController extends Controller
         $request->user()->delete();
         return response()->json(['message' => 'User deleted']);
     }
+
+
+
 }
