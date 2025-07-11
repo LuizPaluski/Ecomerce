@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Uploads\ImagenRepository;
 use Dotenv\Validator;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+
 
 class UserController extends Controller
 {
@@ -26,16 +26,17 @@ class UserController extends Controller
         return response()->json($request->user());
     }
 
-    public function createModerator(Request $request){
-        $user =
-        $request->user()->assignPermission('admin');
-
-        if(!$request->user()->hasPermission('admin')){
-            return response()->json('error not admin');
-        }
-
-        return response()->json('success');
+    public function destroy(Request $request){
+        $request->user()->delete();
+        return response()->json(['message' => 'User deleted']);
     }
 
+    public function uploadImage(Request $request)
+    {
+        $coverPath = new ImagenRepository();
 
+        $filePath = $coverPath->uploadPublicImage($request);
+
+        return response()->json(['file_path' => $filePath]);
+    }
 }
