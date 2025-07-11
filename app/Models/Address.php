@@ -18,11 +18,12 @@ class Address extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'address_line_1',
-        'address_line_2',
+        'user_id',
+        'street',
+        'number',
+        'zip_code',
         'city',
         'state',
-        'zip_code',
         'country',
     ];
 
