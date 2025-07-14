@@ -45,27 +45,24 @@ class UserController extends Controller
     }
 
     public function createModerator(Request $request){
-        if($request->user()->role != 1){
+        if($request->user()->role != 'admin'){
             return response()->json(['message' => 'You are not allowed to create moderator']);
         }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => New EnumValue(UserType::moderator),
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-       // $this->validate($request, [
-         //   'user_type' => 'required', New EnumValue(UserType::moderator)
-    //    ]);
+
         $users = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => UserType::moderator,
+            'role' => UserType::MODERATOR,
 
         ]);
 
