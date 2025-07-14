@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
+use App\Models\User;
 use App\Repositories\Uploads\ImagenRepository;
-use Dotenv\Validator;
+use BenSampo\Enum\Rules\EnumValue;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 
@@ -38,5 +42,35 @@ class UserController extends Controller
         $filePath = $coverPath->uploadPublicImage($request);
 
         return response()->json(['file_path' => $filePath]);
+    }
+
+    public function createModerator(Request $request){
+        if($request->user()->role != 1){
+            return response()->json(['message' => 'You are not allowed to create moderator']);
+        }
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'role' => New EnumValue(UserType::moderator),
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+       // $this->validate($request, [
+         //   'user_type' => 'required', New EnumValue(UserType::moderator)
+    //    ]);
+        $users = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => UserType::moderator,
+
+        ]);
+
+        return response()->json($users, 201);
+
+
     }
 }

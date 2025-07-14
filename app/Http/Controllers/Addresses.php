@@ -13,6 +13,7 @@ class Addresses extends Controller
     public function index()
     {
 
+
     }
 
     /**
