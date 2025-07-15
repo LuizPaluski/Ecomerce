@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->timestamp('startDate');
-            $table->time('endDate');
+            $table->timestamp('endDate');
             $table->foreignId('product_id');
             $table->decimal('discountPercentage', 5, 2);
             $table->timestamps();
