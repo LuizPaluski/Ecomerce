@@ -3,7 +3,14 @@
 use App\Http\Api\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AddressUser;
+use App\Http\Controllers\AddressUserController;
+use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\CouponsController;
+use App\Http\Controllers\DiscountsController;
+use App\Http\Controllers\CartsController;
+use App\Http\Controllers\OrdersController;
+
 //Register e login
 Route::post('/login',  [AuthController::class, 'login']);
 Route::post('/register',  [AuthController::class, 'register']);
@@ -12,78 +19,62 @@ Route::get('/verify-token',  [AuthController::class, 'verifyToken']);
 //Precisa estar autenticado para pode atualizar o token
 Route::middleware('auth:sanctum')->post('/renew-token',  [AuthController::class, 'renewToken']);
 
+// Rotas publicas
+Route::get('/products', [ProductsController::class, 'showAll']);
+Route::get('/products/{id}', [ProductsController::class, 'show']);
+Route::get('/categories', [CategoriesController::class, 'show']);
+
+
 Route::middleware('auth:sanctum')->group(function ()  {
     //Users
-    Route::get('/user/me', [Usercontroller::class, 'index']);
+    Route::get('/user/me', [UserController::class, 'index']);
     Route::put('/user/me', [UserController::class, 'update']);
     Route::delete('/user/me', [AuthController::class, 'delete']);
-    Route::post('/user/create-moderator', [UserController::class, 'createModerator']);
     Route::put('/user/imagen', [UserController::class, 'uploadImage']);
+    Route::post('/user/create-moderator', [UserController::class, 'createModerator'])->middleware('admin');
 
     //address
-    Route::get('/address/', [AddressUser::class, 'index']);
-    Route::post('/address/', [AddressUser::class, 'store']);;
-    Route::put('/address/{address_id}', [AddressUser::class, 'update']);;
-    Route::get('/address/{address_id}', [AddressUser::class, 'show']);
-    Route::delete('/address/{address_id}', [AddressUser::class, 'destroy']);
+    Route::get('/address/', [AddressUserController::class, 'index']);
+    Route::post('/address/', [AddressUserController::class, 'store']);;
+    Route::put('/address/{address_id}', [AddressUserController::class, 'update']);;
+    Route::get('/address/{address_id}', [AddressUserController::class, 'show']);
+    Route::delete('/address/{address_id}', [AddressUserController::class, 'destroy']);
+
     //categories
-    Route::get('/categories', function () {});
-    Route::post('/categories', function (){});
-    Route::put('/categories/{category_id}', function () {});
-    Route::get('/categories/{category_id}', function () {});
-    Route::delete('/categories/{category_id}', function () {});
+    Route::middleware('admin')->group(function () {
+        Route::post('/categories', [CategoriesController::class, 'store']);
+        Route::put('/categories/{category_id}', [CategoriesController::class, 'update']);
+        Route::delete('/categories/{category_id}', [CategoriesController::class, 'destroy']);
+    });
 
-    //Tags
-    Route::get('/tags', function () {});
-    Route::post('/tags', function () {});
-    Route::put('/tags/{tag_id}', function () {});
-    Route::get('/tags/{tag_id}', function () {});
-    Route::delete('/tags/{tag_id}', function () {});
-    Route::post('/tags/{tag_od}/products/{product_id}', function () {});
-    Route::delete('/tags/{tag_od}/products/{product_id}', function () {});
+    //ProductsController
+    Route::middleware('moderator')->group(function () {
+        Route::post('/products', [ProductsController::class, 'store']);
+        Route::put('/products/{product_id}', [ProductsController::class, 'update']);
+        Route::delete('/products/{product_id}', [ProductsController::class, 'destroy']);
+        Route::put('/products/{product_id}/images', [ProductsController::class, 'image']);
+    });
 
-    //Products
-    Route::get('/products', function () {});
-    Route::post('/products', function () {});
-    Route::get('/products/user/{user_id}', function () {});
-    Route::get('/products/category/{category_id}', function () {});
-    Route::get('/products/{product_id}', function () {});
-    Route::put('/products/{product_id}', function () {});
-    Route::delete('/products/{product_id}', function () {});
-    Route::put('/products/{product_id}/stock', function () {});
-    Route::put('/products/{product_id}/images', function () {});
+    //DiscountsController
+    Route::middleware('admin')->group(function () {
+        Route::apiResource('discounts', DiscountsController::class);
+    });
 
-    //Discounts
-    Route::get('/discounts', function () {});
-    Route::post('/discounts', function () {});
-    Route::get('/discounts/{discount_id}', function () {});
-    Route::put('/discounts/{discount_id}', function () {});
-    Route::delete('/discounts/{discount_id}', function () {});
-
-    //Coupons
-    Route::get('/coupons/', function () {});
-    Route::post('/coupons/', function () {});
-    Route::get('/coupons/{coupon_id}', function () {});
-    Route::put('/coupons/{coupon_id}', function () {});
-    Route::delete('/coupons/{coupon_id}', function () {});
+    //CouponsController
+    Route::middleware('admin')->group(function () {
+        Route::apiResource('coupons', CouponsController::class);
+    });
 
     //Cart
-    Route::get('/cart/', function () {});
-    Route::post('/cart/', function () {});
-    Route::get('/cart/items', function () {});
-    Route::put('/cart/items', function () {});
-    Route::post('/cart/items', function () {});
-    Route::delete('/cart/items', function () {});
-    Route::delete('/cart/clear', function () {});
+    Route::get('/cart/', [CartsController::class, 'index']);
+    Route::post('/cart/', [CartsController::class, 'store']);
+    Route::delete('/cart/clear', [CartsController::class, 'destroy']);
 
-    //Orders
-    Route::get('/orders/all', function () {});
-    Route::get('/orders/', function () {});
-    Route::post('/orders/', function () {});
-    Route::get('/orders/{order_id}', function () {});
-    Route::put('/orders/{order_id}', function () {});
-    Route::delete('/orders/{order_id}', function () {});
-    Route::get('/orders/all/{admin_id}', function () {});
-
+    //OrdersController
+    Route::get('/orders/', [OrdersController::class, 'index']);
+    Route::post('/orders/', [OrdersController::class, 'store']);
+    Route::get('/orders/{order}', [OrdersController::class, 'show']);
+    Route::put('/orders/{order}', [OrdersController::class, 'update'])->middleware('moderator');
+    Route::delete('/orders/{order}', [OrdersController::class, 'destroy']);
 
 });

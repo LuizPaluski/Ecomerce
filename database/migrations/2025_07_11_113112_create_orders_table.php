@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\OrderStatus;
 
 return new class extends Migration
 {
@@ -17,7 +18,7 @@ return new class extends Migration
             $table->foreignId('address_id');
             $table->datetime('orderData');
             $table->foreignId('coupon_id')->nullable();
-            $table->enum('status', ['pending', 'processing','shipped' ,'completed','cancelled'])->default('pending');
+            $table->enum('status', OrderStatus::getValues())->default(OrderStatus::PENDING);
             $table->timestamps();
         });
     }

@@ -8,6 +8,9 @@ class Discount extends Model
 {
     protected $fillable =
         [
-
+            "description",
+            "startDate",
+            "endDate",
+            "discountPercentage",
         ];
 }
