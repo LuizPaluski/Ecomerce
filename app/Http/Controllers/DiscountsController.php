@@ -16,10 +16,10 @@ class DiscountsController extends Controller
     {
         $discount = Discount::create($request->all([
             'description',
-            'discountPercentage',
-            'endData',
-            'startData',
-            'product_id',
+            'discountPercentage' => 'required',
+            'endData' => 'sometimes',
+            'startData' => 'sometimes',
+            'product_id' => 'required',
         ]));
         return response()->json($discount, 201);
     }

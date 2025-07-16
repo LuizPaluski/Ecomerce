@@ -15,7 +15,10 @@ class CouponsController extends Controller
     public function store(Request $request)
     {
         $coupon = Coupon::create($request->all([
-            'code',
+            'code' => 'required',
+            'endData' => 'sometimes',
+            'startData' => 'sometimes',
+            'discountPercentage'=> 'required',
 
         ]));
         return response()->json($coupon, 201);
