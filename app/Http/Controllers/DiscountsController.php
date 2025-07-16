@@ -14,7 +14,13 @@ class DiscountsController extends Controller
 
     public function store(Request $request)
     {
-        $discount = Discount::create($request->all());
+        $discount = Discount::create($request->all([
+            'description',
+            'discountPercentage',
+            'endData',
+            'startData',
+            'product_id',
+        ]));
         return response()->json($discount, 201);
     }
 

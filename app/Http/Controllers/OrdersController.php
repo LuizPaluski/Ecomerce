@@ -50,7 +50,7 @@ class OrdersController extends Controller
             'address_id' => $request->address_id,
             'coupon_id' => $request->coupon_id,
             'status' => OrderStatus::PENDING,
-            'total_price' => $totalPrice, // Adiciona o preço total
+            'total_price' => $totalPrice,
         ]);
 
         foreach ($cart->items as $item) {

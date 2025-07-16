@@ -13,10 +13,10 @@ class ProductsController extends Controller
     }
     public function store(Request $request){
         $product = Product::create($request->all([
-            'name',
+            'name'  ,
             'stock',
             'category_id',
-            'description',
+            'description' ,
             'price',
         ]));
         return response()->json($product, 201);
