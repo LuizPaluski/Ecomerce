@@ -20,9 +20,14 @@ class CartsController extends Controller
 
     public function store(Request $request)
     {
+        $validateData = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+        $cart  = $validateData;
         $cart = $request->user()->cart;
         if (!$cart) {
-            $cart = $request->user()->cart()->create([]);
+            $cart = $request->user()->cart()->create();
         }
 
         $product = Product::find($request->product_id);
