@@ -12,6 +12,5 @@ class Discount extends Model
             "startDate",
             "endDate",
             "discountPercentage",
-            'product_id'
         ];
 }

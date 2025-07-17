@@ -37,7 +37,7 @@ class AddressUserController extends Controller
      */
     public function update(Request $request, Address $address)
     {
-        $request->user()->adresses()->all();
+        $request->user()->addresses()->all();
         $address->update($request->all());
     }
 

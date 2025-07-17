@@ -33,7 +33,6 @@ class Address extends Model
      * @var list<string>
      */
     protected $hidden = [
-        '',
         'remember_token',
     ];
 
@@ -45,7 +44,6 @@ class Address extends Model
     protected function casts(): array
     {
         return [
-            '',
             'password' => 'hashed',
         ];
     }
