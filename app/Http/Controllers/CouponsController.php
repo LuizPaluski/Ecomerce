@@ -14,13 +14,14 @@ class CouponsController extends Controller
 
     public function store(Request $request)
     {
-        $coupon = Coupon::create($request->all([
-            'code' => 'required',
-            'endData' => 'sometimes',
-            'startData' => 'sometimes',
-            'discountPercentage'=> 'required',
+        $validatedData = $request->validate([
+            'code' => 'required|string|unique:coupons',
+            'startDate' => 'required|date',
+            'endDate' => 'required|date|after_or_equal:startDate',
+            'discountPercentage' => 'required|numeric|min:0|max:100',
+        ]);
+        $coupon = Coupon::create($validatedData);
 
-        ]));
         return response()->json($coupon, 201);
     }
 
@@ -31,7 +32,14 @@ class CouponsController extends Controller
 
     public function update(Request $request, Coupon $coupon)
     {
-        $coupon->update($request->all());
+        $validatedData = $request->validate([
+            'code' => 'sometimes|required|string|unique:coupons,code,' . $coupon->id,
+            'startDate' => 'sometimes|required|date',
+            'endDate' => 'sometimes|required|date|after_or_equal:startDate',
+            'discountPercentage' => 'sometimes|required|numeric|min:0|max:100',
+        ]);
+
+        $coupon->update($validatedData);
         return response()->json($coupon);
     }
 

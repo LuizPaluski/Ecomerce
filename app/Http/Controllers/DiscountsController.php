@@ -14,13 +14,18 @@ class DiscountsController extends Controller
 
     public function store(Request $request)
     {
-        $discount = Discount::create($request->all([
-            'description',
-            'discountPercentage' => 'required',
-            'endData' => 'sometimes',
-            'startData' => 'sometimes',
-            'product_id' => 'required',
-        ]));
+        $validatedData = $request->validate([
+            'description' => 'required|string',
+            'discountPercentage' => 'required|numeric|min:0|max:100',
+            'startDate' => 'required|date',
+            'endDate' => 'required|date|after_or_equal:startDate',
+            'product_id' => 'required|exists:products,id',
+        ]);
+
+        $discount = Discount::create($validatedData);
+
+        $discount->products()->attach($validatedData['product_id']);
+
         return response()->json($discount, 201);
     }
 
@@ -31,7 +36,14 @@ class DiscountsController extends Controller
 
     public function update(Request $request, Discount $discount)
     {
-        $discount->update($request->all());
+        $validatedData = $request->validate([
+            'description' => 'sometimes|required|string',
+            'discountPercentage' => 'sometimes|required|numeric|min:0|max:100',
+            'startDate' => 'sometimes|required|date',
+            'endDate' => 'sometimes|required|date|after_or_equal:startDate',
+        ]);
+
+        $discount->update($validatedData);
         return response()->json($discount);
     }
 

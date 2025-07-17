@@ -14,4 +14,6 @@ class Coupon extends Model
             'discountPercentage',
 
         ];
+
+
 }
