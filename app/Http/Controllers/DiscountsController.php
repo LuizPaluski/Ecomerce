@@ -24,8 +24,6 @@ class DiscountsController extends Controller
 
         $discount = Discount::create($validatedData);
 
-        $discount->products()->attach($validatedData['product_id']);
-
         return response()->json($discount, 201);
     }
 
