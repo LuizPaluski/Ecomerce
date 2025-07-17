@@ -13,12 +13,13 @@ class CategoriesController extends Controller
     }
 
     public function store(Request $request){
-        $category = Category::create($request->all([
-            'name',
-            'description',
-            'image',
-        ]));
-        return response()->json($category, 201);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+        ]);
+        $coupon = Category::create($validatedData);
+
+        return response()->json($coupon, 201);
 
     }
 

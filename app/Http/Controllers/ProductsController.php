@@ -12,14 +12,17 @@ class ProductsController extends Controller
         return Product::all();
     }
     public function store(Request $request){
-        $product = Product::create($request->all([
-            'name'  ,
-            'stock',
-            'category_id',
-            'description' ,
-            'price',
-        ]));
-        return response()->json($product, 201);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'description' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'image' => 'sometimes|image',
+        ]);
+        $coupon = Product::create($validatedData);
+
+        return response()->json($coupon, 201);
     }
     public function destroy(Request $request, $id){
         $product = Product::find($id);
