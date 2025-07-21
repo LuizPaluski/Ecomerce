@@ -19,6 +19,7 @@ class ProductsController extends Controller
             'description' => 'required|string|max:255',
             'price' => 'required|numeric',
             'image' => 'sometimes|image',
+            'discountPercentage' => 'sometimes|numeric|min:0|max:100',
         ]);
         $coupon = Product::create($validatedData);
 

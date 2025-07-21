@@ -15,6 +15,7 @@ class OrdersController extends Controller
     }
     public function store(Request $request)
     {
+
         $cart = $request->user()->cart()->with('items.product.discounts')->first();
         if (!$cart || $cart->items->isEmpty()) {
             return response()->json(['message' => 'Cart is empty'], 400);

@@ -7,45 +7,54 @@ use Illuminate\Http\Request;
 
 class AddressUserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
 
-
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->user()->addresses()->create($request->all());
+        $validatedData = $request->validate([
+            'city' => 'required|string',
+            'state' => 'required|string',
+            'country' => 'required|string',
+            'zip_code' => 'required|string',
+            'street' => 'required|string',
+            'number' => 'required|string',
+        ]);
+        $request->user()->address()->create($validatedData);
+        return response()->json($request->user()->address()->first(), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Address $address)
+    public function show(Request $request)
     {
-        $address->load('user');
+        $request->user()->address()->first();
+        if($request->user()->address()->first() == null){
+            return response()->json(['message' => 'Address not found, or delete'], 404);
+        }
+        return response()->json($request->user()->address()->first());
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, Address $address)
     {
-        $request->user()->addresses()->all();
-        $address->update($request->all());
+        $validatedData = $request->validate([
+            'city' => 'sometimes|string',
+            'state' => 'sometimes|string',
+            'country' => 'sometimes|string',
+            'zip_code' => 'sometimes|string',
+            'street' => 'sometimes|string',
+            'number' => 'sometimes|string',
+        ]);
+        $request->user()->address()->update($validatedData);
+        return response()->json($request->user()->address()->first());
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Address $address)
+
+    public function destroy(Request $request)
     {
-        $address->delete();
+        $request->user()->address()->delete();
+        return response()->json(['message' => 'Address deleted']);
     }
 }
