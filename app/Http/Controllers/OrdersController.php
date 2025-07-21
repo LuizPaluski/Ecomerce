@@ -15,6 +15,10 @@ class OrdersController extends Controller
     }
     public function store(Request $request)
     {
+//        $validateData = $request->validate([
+//            'address_id' => 'required|exists:addresses,id',
+//            'coupon_id' => 'sometimes|exists:coupons,id',
+//        ]);
 
         $cart = $request->user()->cart()->with('items.product.discounts')->first();
         if (!$cart || $cart->items->isEmpty()) {
