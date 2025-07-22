@@ -24,4 +24,6 @@ class Product extends Model
     public function discounts(): HasMany{
         return $this->hasMany(Discount::class);
     }
+
+
 }

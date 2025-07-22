@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Coupon;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use App\Enums\OrderStatus;
 
@@ -13,18 +14,18 @@ class OrdersController extends Controller
     {
         return $request->user()->orders()->with('items.product')->get();
     }
-    public function store(Request $request)
+    public function store(Request $request, OrderItem $orderItem)
     {
-//        $validateData = $request->validate([
-//            'address_id' => 'required|exists:addresses,id',
-//            'coupon_id' => 'sometimes|exists:coupons,id',
-//        ]);
 
-        $cart = $request->user()->cart()->with('items.product.discounts')->first();
+
+        $cart = $request->user()->cart()->with([
+            'items',
+            'product',
+            'discounts',
+        ])->first();
         if (!$cart || $cart->items->isEmpty()) {
             return response()->json(['message' => 'Cart is empty'], 400);
         }
-
         $totalPrice = 0;
         foreach ($cart->items as $item) {
             $productPrice = $item->product->price;
@@ -51,15 +52,15 @@ class OrdersController extends Controller
                 $totalPrice *= (1 - ($coupon->discountPercentage / 100));
             }
         }
-        $order = $request->user()->orders()->create([
-            'address_id' => $request->address_id,
-            'coupon_id' => $request->coupon_id,
-            'status' => OrderStatus::PENDING,
-            'total_price' => $totalPrice,
+        $validationData = $request->validate([
+            'address_id' => 'required|exists:addresses,id',
+            'status' => 'required|in:' . implode(',', OrderStatus::getValues()),
+            'coupon_id' => 'sometimes|exists:coupons,id',
+            'totalPrice' => $totalPrice,
         ]);
 
         foreach ($cart->items as $item) {
-            $order->items()->create([
+            $orderItem->items()->create([
                 'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
                 'unitPrice' => $item->product->price,
@@ -68,7 +69,7 @@ class OrdersController extends Controller
         $cart->items()->delete();
         $cart->delete();
 
-        return response()->json($order->load('items.product'), 201);
+        return response()->json($orderItem->load('items.product'), 201);
     }
     public function show(Request $request, Order $order)
     {
