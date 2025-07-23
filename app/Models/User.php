@@ -67,7 +67,7 @@ class User extends Authenticatable
         $this->permissions()->attach($permission);
     }
     public function permissions(): belongsToMany{
-        return $this->belongsToMany(Permission::class);
+        return $this->belongsToMany(permission::class);
     }
 
 
@@ -83,8 +83,8 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function address(): HasOne{
-        return $this->hasOne(Address::class);
+    public function addresses(): HasMany{
+        return $this->hasMany(Address::class);
     }
 
 }

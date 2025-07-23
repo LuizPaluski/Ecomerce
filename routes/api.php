@@ -3,13 +3,14 @@
 use App\Http\Api\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AddressUserController;
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CouponsController;
 use App\Http\Controllers\DiscountsController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\OrdersController;
+
 
 //Register e login
 Route::post('/login',  [AuthController::class, 'login']);
@@ -34,11 +35,8 @@ Route::middleware('auth:sanctum')->group(function ()  {
     Route::post('/user/create-moderator', [UserController::class, 'createModerator'])->middleware('admin');
 
     //address
-    Route::get('/address/', [AddressUserController::class, 'index']);
-    Route::post('/address/', [AddressUserController::class, 'store']);;
-    Route::put('/address/{address_id}', [AddressUserController::class, 'update']);;
-    Route::get('/address/{address_id}', [AddressUserController::class, 'show']);
-    Route::delete('/address/{address_id}', [AddressUserController::class, 'destroy']);
+    Route::apiResource('addresses', AddressController::class);
+
 
     //categories
     Route::middleware('admin')->group(function () {
