@@ -29,6 +29,13 @@ class OrdersController extends Controller
         if (!$cart || $cart->items->isEmpty()) {
             return response()->json(['message' => 'Your cart is empty.'], 422);
         }
+        foreach ($cart->items as $item) {
+            if ($item->product->stock < $item->quantity) {
+                return response()->json([
+                    'message' => 'Insufficient stock for the product: ' . $item->product->name,
+                ], 422);
+            }
+        }
 
 
         $order = DB::transaction(function () use ($user, $cart, $validatedData) {
@@ -66,7 +73,11 @@ class OrdersController extends Controller
                     'quantity' => $cartItem->quantity,
                     'unit_price' => $cartItem->product->price,
                 ]);
-            }
+                $product = $cartItem->product;
+                $product->stock -= $cartItem->quantity;
+                $product->save();
+}
+
             $cart->items()->delete();
             $cart->delete();
 
