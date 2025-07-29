@@ -23,6 +23,7 @@ class CartsController extends Controller
         $validateData = $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
+            'discountPercentage' => 'sometimes|numeric|min:0|max:100',
         ]);
         $cart  = $validateData;
         $cart = $request->user()->cart;

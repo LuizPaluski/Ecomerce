@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOrderRequest;
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\Coupon;
-use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use App\Enums\OrderStatus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\log;
 
 class OrdersController extends Controller
 {
@@ -16,66 +18,63 @@ class OrdersController extends Controller
         return $request->user()->orders()->with('items.product')->get();
     }
 
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        $request->validate([
-            'address_id' => 'required|exists:addresses,id,user_id,' . $request->user()->id,
-            'coupon_id' => 'sometimes|nullable|exists:coupons,id',
-        ]);
 
-        $cart = $request->user()->cart()->with('items.product.discounts')->first();
+        $validatedData = $request->validated();
+
+        $user = auth()->user();
+        $cart = $user->cart()->with('items.product')->first();
 
         if (!$cart || $cart->items->isEmpty()) {
-            return response()->json(['message' => 'O carrinho está vazio'], 400);
+            return response()->json(['message' => 'Your cart is empty.'], 422);
         }
 
-        $totalPrice = 0;
-        foreach ($cart->items as $item) {
-            $productPrice = $item->product->price;
-            $discountPercentage = 0;
 
-            foreach ($item->product->discounts as $discount) {
-                $discountPercentage += $discount->discountPercentage;
+        $order = DB::transaction(function () use ($user, $cart, $validatedData) {
+            $totalPrice = $cart->items->sum(function ($item) {
+                return (float)$item->quantity * (float)$item->product->price;
+            });
+
+            $finalPrice = $totalPrice;
+            $couponId = null;
+
+            if (!empty($validatedData['coupon_code'])) {
+                $coupon = Coupon::where('code', $validatedData['coupon_code'])
+                    ->where('endDate', '>', now())
+                    ->first();
+
+                if ($coupon) {
+                    $discountValue = (float) $coupon->discountPercentage / 100 * $totalPrice ;
+                    $finalPrice -= $discountValue;
+                    $couponId = $coupon->id;
+                }
             }
 
-            if ($discountPercentage > 100) {
-                $discountPercentage = 100;
-            }
-
-            $discountedPrice = $productPrice * (1 - ($discountPercentage / 100));
-            $totalPrice += $discountedPrice * $item->quantity;
-        }
-
-        if ($request->coupon_id) {
-            $coupon = Coupon::find($request->coupon_id);
-            if ($coupon) {
-                $totalPrice *= (1 - ($coupon->discountPercentage / 100));
-            }
-        }
-
-        $order = DB::transaction(function () use ($request, $cart, $totalPrice) {
-            $order = $request->user()->orders()->create([
-                'address_id' => $request->address_id,
-                'coupon_id' => $request->coupon_id,
-                'total_price' => $totalPrice,
+            $order = Order::create([
+                'user_id' => $user->id,
+                'address_id' => $validatedData['address_id'],
+                'coupon_id' => $couponId,
+                'total_price' => $finalPrice,
                 'status' => OrderStatus::PENDING,
             ]);
 
-            foreach ($cart->items as $item) {
+
+            foreach ($cart->items as $cartItem) {
                 $order->items()->create([
-                    'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
-                    'unit_price' => $item->product->price,
+                    'product_id' => $cartItem->product_id,
+                    'quantity' => $cartItem->quantity,
+                    'unit_price' => $cartItem->product->price,
                 ]);
             }
-
             $cart->items()->delete();
             $cart->delete();
 
             return $order;
         });
 
-        return response()->json($order->load('items.product'), 201);
+
+        return new OrderResource($order->load(['address', 'items.product']));
     }
 
     public function show(Request $request, Order $order)

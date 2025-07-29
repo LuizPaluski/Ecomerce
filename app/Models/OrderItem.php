@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Product;
 
 class OrderItem extends Model
 {
@@ -22,17 +21,14 @@ class OrderItem extends Model
         'unit_price',
     ];
 
-    /**
-     * Get the order that the item belongs to.
-     */
+    protected $casts = [
+        'total_price' => 'decimal:2',];
+
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    /**
-     * Get the product associated with the order item.
-     */
     public function product()
     {
         return $this->belongsTo(Product::class);

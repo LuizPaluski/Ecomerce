@@ -15,5 +15,10 @@ class Coupon extends Model
 
         ];
 
+    protected $casts = [
+        'discountPercentage' => 'decimal:2',
+        'endDate' => 'datetime',
+    ];
+
 
 }

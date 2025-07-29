@@ -2,29 +2,49 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cart extends Model
 {
-    protected $fillable = [
-        'address_id',
-        'coupon_id',
-        ];
-    public function user(): BelongsTo{
+    use HasFactory;
+
+    protected $fillable = ['user_id'];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['total'];
+
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function Items(): HasMany{
+    public function items()
+    {
         return $this->hasMany(CartItem::class);
     }
 
-    public function product(): BelongsTo{
-        return $this->belongsTo(Product::class);
-    }
+    /**
+     * Calculate the total price of the cart, applying any active discounts.
+     *
+     * @return float
+     */
+    public function getTotalAttribute()
+    {
 
-    public function discounts(): BelongsTo{
-        return $this->belongsTo(Discount::class);
+        $this->loadMissing('items.product.discounts');
+
+        return $this->items->sum(function ($item) {
+
+            if ($item->product) {
+
+                return $item->product->price_with_discount * $item->quantity;
+            }
+            return 0;
+        });
     }
 }

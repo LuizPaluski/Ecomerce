@@ -30,6 +30,7 @@ class Order extends Model
      * @var array
      */
     protected $casts = [
+        'total_price' => 'decimal:2',
         'status' => OrderStatus::class
     ];
 

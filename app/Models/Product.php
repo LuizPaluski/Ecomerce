@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Discount;
 
 class Product extends Model
 {
@@ -19,6 +20,10 @@ class Product extends Model
         'price',
         'image',
         'discount',
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
     ];
 
     public function discounts(): HasMany{

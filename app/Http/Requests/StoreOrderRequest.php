@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -11,6 +12,7 @@ class StoreOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
+
         return true;
     }
 
@@ -22,7 +24,18 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'address_id' => [
+                'required',
+
+                Rule::exists('addresses', 'id')->where('user_id', auth()->id()),
+            ],
+
+            'coupon_code' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::exists('coupons', 'code'),
+            ],
         ];
     }
 }
