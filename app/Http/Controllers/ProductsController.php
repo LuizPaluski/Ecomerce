@@ -8,6 +8,11 @@ use App\Repositories\Uploads\ImagenRepository;
 
 class ProductsController extends Controller
 {
+    public function __construct(
+       // protected ProductRepositoryInterface $productRepository,
+      //  protected ImagenRepository $imagenRepository
+    ) {
+    }
     public function showAll(Request $request){
         return Product::all();
     }
@@ -22,6 +27,7 @@ class ProductsController extends Controller
             'discountPercentage' => 'sometimes|numeric|min:0|max:100',
         ]);
         $coupon = Product::create($validatedData);
+
 
         return response()->json($coupon, 201);
     }
@@ -62,19 +68,14 @@ class ProductsController extends Controller
         return response()->json($product->stock);
     }
 
-    public function image(Request $request, $id)
+    public function image(Request $request, ImagenRepository $imagenRepository)
     {
-        $product = Product::find($id);
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
+        $request->validate([
+            'cover' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
 
-        $coverPath = new ImagenRepository();
-        $filePath = $coverPath->uploadPublicImage($request);
+        $filePath = $imagenRepository->uploadPublicImage($request);
 
-        $product->image = $filePath;
-        $product->save();
-
-        return response()->json(['file_path' => $filePath]);
+        return response()->json(['file_path' => $filePath], 201);
     }
 }

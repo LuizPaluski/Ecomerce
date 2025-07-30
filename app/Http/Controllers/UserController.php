@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+
+    public function __construct(
+       // protected UserRepositoryInterface $userRepository,
+       // protected ImagenRepository $imagenRepository,
+    ) {
+    }
     public function index(Request $request){
         $user = $request->user();
         return response()->json($user);
@@ -35,13 +41,15 @@ class UserController extends Controller
         return response()->json(['message' => 'User deleted']);
     }
 
-    public function uploadImage(Request $request)
+    public function uploadImage(Request $request, ImagenRepository $imagenRepository)
     {
-        $coverPath = new ImagenRepository();
+        $request->validate([
+            'cover' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
 
-        $filePath = $coverPath->uploadPublicImage($request);
+        $filePath = $imagenRepository->uploadPublicImage($request);
 
-        return response()->json(['file_path' => $filePath]);
+        return response()->json(['file_path' => $filePath], 201);
     }
 
     public function createModerator(Request $request){

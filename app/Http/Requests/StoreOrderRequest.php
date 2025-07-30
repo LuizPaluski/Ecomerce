@@ -29,6 +29,7 @@ class StoreOrderRequest extends FormRequest
 
                 Rule::exists('addresses', 'id')->where('user_id', auth()->id()),
             ],
+            'discount_code' => 'nullable|string|max:255',
 
             'coupon_code' => [
                 'nullable',

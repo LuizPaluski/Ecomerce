@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Models\Discount;
 use App\Models\Order;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
@@ -45,18 +46,26 @@ class OrdersController extends Controller
 
             $finalPrice = $totalPrice;
             $couponId = null;
+            $discountValue = null;
 
-            if (!empty($validatedData['coupon_code'])) {
-                $coupon = Coupon::where('code', $validatedData['coupon_code'])
-                    ->where('endDate', '>', now())
-                    ->first();
+                if (!empty($validatedData['coupon_code'])) {
+                    $coupon = Coupon::where('code', $validatedData['coupon_code'])
+                        ->where('endDate', '>', now())
+                        ->first();
 
-                if ($coupon) {
-                    $discountValue = (float) $coupon->discountPercentage / 100 * $totalPrice ;
-                    $finalPrice -= $discountValue;
-                    $couponId = $coupon->id;
+                    if ($coupon) {
+                        $discountValue = (float)$coupon->discountPercentage / 100 * $totalPrice;
+                        $discount = Discount::all()->where('product_id', $coupon->product_id)->first();
+                        if ($discount) {
+                            $discountValue = (float)$discount->discountPercentage / 100 * $totalPrice;
+                        }
+                        $finalPrice -= $discountValue;
+                        $couponId = $coupon->id;
+
+
+                    }
                 }
-            }
+
 
             $order = Order::create([
                 'user_id' => $user->id,

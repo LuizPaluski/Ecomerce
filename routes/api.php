@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->group(function ()  {
     Route::get('/user/me', [UserController::class, 'index']);
     Route::put('/user/me', [UserController::class, 'update']);
     Route::delete('/user/me', [AuthController::class, 'delete']);
-    Route::put('/user/imagen', [UserController::class, 'uploadImage']);
+    Route::post('/user/imagen', [UserController::class, 'uploadImage']);
     Route::post('/user/create-moderator', [UserController::class, 'createModerator'])->middleware('admin');
 
     //address
@@ -50,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function ()  {
         Route::post('/products', [ProductsController::class, 'store']);
         Route::put('/products/{product_id}', [ProductsController::class, 'update']);
         Route::delete('/products/{product_id}', [ProductsController::class, 'destroy']);
-        Route::put('/products/{product_id}/images', [ProductsController::class, 'image']);
+        Route::post('/products/{product_id}/images', [ProductsController::class, 'image']);
     });
 
     //DiscountsController
