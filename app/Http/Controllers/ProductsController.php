@@ -8,11 +8,7 @@ use App\Repositories\Uploads\ImagenRepository;
 
 class ProductsController extends Controller
 {
-    public function __construct(
-       // protected ProductRepositoryInterface $productRepository,
-      //  protected ImagenRepository $imagenRepository
-    ) {
-    }
+
     public function showAll(Request $request){
         return Product::all();
     }

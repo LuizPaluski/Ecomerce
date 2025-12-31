@@ -14,11 +14,6 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
 
-    public function __construct(
-       // protected UserRepositoryInterface $userRepository,
-       // protected ImagenRepository $imagenRepository,
-    ) {
-    }
     public function index(Request $request){
         $user = $request->user();
         return response()->json($user);

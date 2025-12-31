@@ -13,8 +13,9 @@ use App\Http\Controllers\OrdersController;
 
 
 //Register e login
-Route::post('/login',  [AuthController::class, 'login']);
-Route::post('/register',  [AuthController::class, 'register']);
+Route::post('/send-code', [AuthController::class, 'sendCode']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::get('/verify-token',  [AuthController::class, 'verifyToken']);
 
 //Precisa estar autenticado para pode atualizar o token

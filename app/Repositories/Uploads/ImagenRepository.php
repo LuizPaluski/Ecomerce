@@ -14,4 +14,3 @@ class ImagenRepository
         return null;
     }
 }
-
