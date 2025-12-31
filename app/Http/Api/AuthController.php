@@ -23,7 +23,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $code = rand(100000, 999999);
+        $code = random_int(100000, 999999);
 
         EmailVerification::where('email', $request->email)->delete();
 
